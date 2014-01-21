@@ -1,0 +1,5 @@
+_.reduce($('[data-s]'), function(memo, s){ 
+  memo.push(parseInt(s.getAttribute('data-s')))
+  return memo
+}, [])
+

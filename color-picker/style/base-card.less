@@ -1,0 +1,579 @@
+@import 'core.less';
+
+@artwork_visibility_percent_normal: 50%;
+@header_color: #008FD5;
+@white: white;
+@description_color: #94999C;
+@hard_coded_width: 400px;  // can range from 400 (2 columns) to 600 (3 columns)
+
+@enable_border: asdf; // set to 1px to enable borders
+@stamp_size: 60px;
+@half_stamp_size: 30px;
+
+
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.base-card, .alb-sample {
+  //display: table-cell;  //this causing thigns to fill space
+  //max-width: 600px;
+  //min-width: 400px;
+  width: @hard_coded_width;
+  min-height: @hard_coded_width;
+  position: relative;
+  padding: 1px;
+  border: @enable_border solid red;
+
+  .header {
+    font-size: 14px;
+    color: @header_color;
+    text-align: center;
+    .stamp {
+      height: 18px;
+      display: inline-table;
+      background-repeat: no-repeat;
+      background-position: 0px 0px;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      &.similar-to-artist {
+        background-image: url('../img/icons/icon-exclusive.png');
+      }
+      &.new-music-plus-music {
+        background-image: url('../img/icons/icon-new-release.png');
+      }
+      &.playlist-music-plus-activity {
+        background-image: url('../img/icons/icon-heavy-rotation.png');
+      }
+      &.recommendation {
+        background-image: url('../img/icons/icon-recommendation.png');
+      }
+      &.exclusive {
+        background-image: url('../img/icons/icon-exclusive.png');
+      }
+      &.comment {
+        background-image: url('../img/icons/icon-review.png');
+      }
+    }
+  }
+  & > .inner {
+    position: relative;
+    padding: 1px;
+  }
+  .foreground {
+    position: relative;
+    margin-top: 50%;
+    border: @enable_border solid green;
+  }
+  .background {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    border: @enable_border solid blue;
+
+    .artwork {
+      display: block;
+      width: 100%;
+      z-index: 10;
+    }
+    .artwork-bg {
+      display: none;
+      z-index: 9;
+    }
+    &.track {
+      .artwork {
+        position: absolute;
+        top: 20%;
+        width: 50%;
+        left: 25%;
+      }
+      .blur-cover {
+        background: black;
+        overflow: hidden;
+        .artwork-bg {
+          display: block;
+          position: relative;
+          top: 0px;
+          left: 0px;
+          -webkit-filter: blur(15px);
+          margin: -3%;
+          width: 106%;
+          opacity: 0.8
+        }
+      }
+    }
+    .shadower {
+      width: 100%;
+      position: absolute;
+      top: 0px;
+      height: @artwork_visibility_percent_normal;
+      -webkit-box-shadow: 0px 0px 12px 1px rgba(0, 0, 0, .06);
+      //background-image: url('../img/2/hover-shield-lighter.png');
+      background-image: url('../img/2/down-shield.png');
+      background-size: 1px 137px;
+      background-position: center top;
+      background-repeat: repeat no-repeat;
+      z-index: 11;
+      .artwork-details {
+        position: absolute;
+        top: 12px;
+        left: 0px;
+        .primary {
+          font-size: 16px;
+          color: @white;
+          text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.1);
+        }
+        .secondary {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.7);
+          text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);
+        }
+        .highlight-band {
+          padding: 3px 12px;
+          background-color: rgba(0, 0, 0, 0.5);
+          margin-bottom: -4px;
+          display: inline-block;
+        }
+        .badge {
+          background-repeat: no-repeat;
+          background-position: center;
+          width: 18px;
+          margin-left: 7px;
+          display: inline-block;
+          background-size: 18px;
+          &.collection {
+            background-image: url('../img/2/collection.png');
+          }
+          &.sync {
+            background-image: url('../img/2/sync.png');
+          }
+        }
+      }
+      .hover-controls {
+        display: none;
+      }
+      &:hover {
+        //background-image: url('../img/2/hover-shield-darker.png');
+        .hover-controls {
+          display: block;
+        }
+      }
+    }
+    .sleeve {
+      position: absolute;
+      left: 0;
+      top: @artwork_visibility_percent_normal;
+      right: 0px;
+      bottom: 0px;
+      z-index: 100;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .stamp {
+    position: absolute;
+    left: 50%;
+    top: -@half_stamp_size;
+    width: @stamp_size;
+    height: @stamp_size;
+    margin-left: -@half_stamp_size;
+    margin-top: 50%;
+    background-color: #3d8cd7;
+    background-position: center center;
+    background-repeat: no-repeat;
+    .border-radius(60px);
+    z-index: 200;
+
+
+    &.similar-to-artist {
+      background-image: url('../img/2/icon-recommends.png');
+    }
+    &.new-music-plus-music {
+      background-image: url('../img/2/icon-new-releases.png');
+    }
+    &.playlist-music-plus-activity {
+      background-image: url('../img/2/icon-rise.png');
+    }
+    &.recommendation {
+      background-image: url('../img/2/icon-recommends.png');
+    }
+    &.exclusive {
+      background-image: url('../img/2/icon-exclusive.png');
+    }
+    &.prompt {
+      background-image: url('../img/2/icon-exclusive.png');
+    }
+    &.comment {
+      background-image: url('../img/2/icon-comment.png');
+    }
+  }
+
+  .hover-controls {
+    position: absolute;
+    left: 50%;
+    top: -38px;
+    width: 154px;
+    height: 76px;
+    margin-left: -77px;
+    margin-top: 50%;
+    z-index: 500;
+    background-repeat: no-repeat;
+    display: none;
+    & > .inner {
+      background-image: url('../img/2/hover-controls.png');
+      width: 100%;
+      height: 100%; 
+    }
+  }
+  &:hover .hover-controls{
+    display: block;
+  }
+  .artwork-badge {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    z-index: 300;
+    right: -10px;
+    top: 0px;
+    margin-top: -10px;
+    background-repeat: no-repeat;
+    
+    // collection will trump sync in terms of badging based on order here
+    &.collection {
+      background-image: url('../img/2/collection.png');
+    }
+    &.sync {
+      background-image: url('../img/2/sync.png');
+    }
+  }
+  .artwork-exclusive {
+    position: absolute;
+    z-index: 300;
+    right: 2%;
+    top: 2%;
+    background: #008FD5;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 5px;
+    text-transform: uppercase;
+  }
+  .sleeve-content {
+    position: relative;
+    left: 0;
+    width: 100%;
+    z-index: 110;
+    text-align: center;
+    padding-top: 30px;
+    .sleeve-top {
+      width: 100%;
+      border: @enable_border solid black;
+      padding-top: 20px;
+      padding-bottom: 29px;
+      //padding-top: 20px;
+      // display: table;
+      // height: 85px;
+      .content {
+        // display: table-cell;
+        // vertical-align: middle;
+        .title-description {
+          font-size: 14px;
+          color: #008FD5;
+        }
+        .description {
+          font-size: 12px;
+          color: @description_color;
+          //text-transform: uppercase;
+          //letter-spacing: 1px;
+        }
+      }
+    }
+  }
+}
+
+
+
+.entries {
+  position: relative;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  z-index: 110;
+  text-align: center;
+  overflow: hidden;
+  //margin-top: 4%;
+  border: @enable_border solid orange;
+
+  .entry, .people-group {
+    display: inline-block;
+    width: 29%;
+    margin: 0px 1% 0px 1%;
+    
+    .icon {
+      position: relative;
+      padding-top: 5px;
+
+      .icon-text {
+        color: #008fd5;
+        font-size: 28px;
+        font-family: 'Whitney SSm 5r', 'lucida grande', tahoma, verdana, arial, sans-serif;
+        line-height: 1;
+      }
+
+      &.person img, &.album img {
+        width: 52%;
+        -webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.06);
+      }
+
+      &.person img {
+        border-radius: 60%;
+      }
+      &.album .icon-badge {
+        bottom: -5px;
+      }
+      .icon-badge {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        z-index: 300;
+        left: 60%;
+        bottom: 0px;
+        margin-top: -10px;
+        background-repeat: no-repeat;
+        
+        // collection will trump sync in terms of badging based on order here
+        &.collection {
+          background-image: url('../img/2/collection.png');
+        }
+        &.sync {
+          background-image: url('../img/2/sync.png');
+        }
+      }
+    }
+
+    .primary {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #32393d;
+    }
+
+    .secondary {
+      font-size: 12px;
+    }
+  }
+
+  .people-group {
+    width: 100%;
+    .icon.person {
+      display: inline-block;
+      width: 15%;
+      padding: 0px 2%;
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .comment .inner {
+    font-size: 14px;
+    line-height: 1;
+    color: #32393D;
+    text-align: left;
+    padding: 0px 20px;
+
+    .icon {
+      float: left;
+      img {
+        border-radius: 60%;
+        width: 30px;
+        -webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.06);
+      }
+    }
+    .commenter {
+      font-weight: bold;
+      float: left;
+      line-height: 30px;
+      padding-left: 10px;
+    }
+    .timestamp {
+      font-size: 11px;
+      color: #94999C;
+      line-height: 1.5;
+    }
+    .comment-text {
+      clear: both;
+      padding: 10px 0px;
+      line-height: 1.4;
+    }
+  }
+  .people-prompt {
+    .entry {
+      width: 10%;
+      img {
+        width: 100%;
+      }
+    }
+  }
+  .prompt{
+    width: 100%;
+    text-align: center;
+    padding-top: 5%;
+
+    .button {
+      margin: 0 auto;
+      display: table;
+
+      -webkit-background-clip: padding-box;
+      -webkit-box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 0px 0px;
+      -webkit-font-smoothing: auto;
+      -webkit-user-select: none;
+      background-clip: padding-box;
+      background-color: rgb(255, 255, 255);
+      background-image: -webkit-linear-gradient(top, rgb(255, 255, 255) 60%, rgb(245, 247, 250) 100%);
+      border-bottom-color: rgb(184, 195, 201);
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      border-image-outset: 0px;
+      border-image-repeat: stretch;
+      border-image-slice: 100%;
+      border-image-source: none;
+      border-image-width: 1;
+      border-left-color: rgb(184, 195, 201);
+      border-left-style: solid;
+      border-left-width: 1px;
+      border-right-color: rgb(184, 195, 201);
+      border-right-style: solid;
+      border-right-width: 1px;
+      border-top-color: rgb(184, 195, 201);
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      border-top-style: solid;
+      border-top-width: 1px;
+      box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 0px 0px;
+      color: rgb(50, 57, 61);
+      cursor: pointer;
+      font-family: 'Whitney SSm 5r', 'lucida grande', tahoma, verdana, arial, sans-serif;
+      font-size: 12px;
+      line-height: 26px;
+      margin-bottom: 10px;
+      margin-right: 7px;
+      outline-color: rgb(50, 57, 61);
+      outline-style: none;
+      outline-width: 0px;
+      padding-bottom: 0px;
+      padding-left: 30px;
+      padding-right: 10px;
+      padding-top: 0px;
+      position: relative;
+      text-shadow: rgba(255, 255, 255, 0.498039) 0px 1px 0px;
+      zoom: 1;
+      &.collection {
+        background-image: url('../img/2/plus.png');
+        background-repeat: no-repeat;
+        background-size: 12px;
+        background-position: 10px center;
+      }
+    }
+    .resolved-content {
+      display: none;
+    }
+    &.resolved {
+      .resolved-content {
+        display: block;
+      }
+      .button {
+        display: none;
+      }
+      .link {
+        color: #32393d;
+      }
+    }
+  }
+  .divider {
+    display: inline-block;
+    width: 1px;
+    min-height: 90px;
+    background-color: #000;
+    opacity: 0.1;
+    vertical-align: top;
+    margin-top: 10px;
+    display: none;
+  }
+}
+.palate-cleanser {
+  &>.inner {
+    position: relative;
+    padding-left: 10px;
+    width: 100%;
+    padding-bottom: 80px;
+  }
+  .header {
+    color: #008fd5;
+    text-transform: uppercase;
+    width: 100%;
+    text-transform: uppercase;
+    position: absolute;
+    .content {
+      width: 230px;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      text-align: center;
+      background: white;
+      &.recommened-station {
+        width: 250px;
+      }
+    }
+  }
+  .band {
+    height: 0px;
+    margin-bottom: 40px;
+    padding-top: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .entries {
+    height: 200px;
+    .entry {
+      width: 14%;
+    }
+    .divider {
+      display: none;
+    }
+  }
+}
+
+
+
+
+.cheat {
+  position: fixed;
+  top: 0px;
+  width: 200px;
+  height: 200px;
+  right: 0px;
+  z-index: 1000;
+  line-height: 11px;
+  .orig {
+    border: 1px solid black;
+    margin-top: 10px;
+  }
+  .reduce {
+    border: 1px solid red;
+  }
+  .merge {
+    border: 1px solid blue;
+  }
+  .final {
+    border: 1px solid green;
+  }
+  .sample {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+  }
+}

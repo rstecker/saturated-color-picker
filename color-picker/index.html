@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Color Sample</title>
+    <link rel="stylesheet" type="text/css" href="../lib/normalize.css">
+    <link rel="stylesheet" type="text/css" href="../lib/rdio-utils.css">
+    <link rel="stylesheet" type="text/css" href="style/fonts.css">
+    <link rel="stylesheet/less" type="text/css" href="style/main.less">
+    <link rel="stylesheet/less" type="text/css" href="style/normal-item.less">
+    <link rel="stylesheet/less" type="text/css" href="style/base-card.less">
+
+    <!-- Register your app at http://www.rdio.com/developers/create/ and replace client_id below with yours  -->
+    <script src="https://rdio.com/api/api.js?client_id=4B0LKIKncnTAPX0Mbn4Zkg"></script>
+    <!--<script src="http://rdio.localhost:8000/api/api.js?client_id=3C5sRdIYmnO2LOXP7A206g"></script>-->
+
+    <script src="../lib/jquery-1.9.1.min.js"></script>
+    <script src="../lib/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="../lib/underscore-1.4.4.min.js"></script>
+    <script src="../lib/less-1.3.0.min.js"></script>
+    <script src="../lib/rdio-utils.js"></script>
+    <script src="../lib/zot.js"></script>
+    <script src="../lib/jquery.color.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/color-picking.js"></script>
+
+    <script id="alb-sample-template" type="text/template">
+      <div class="background">
+          <img crossorigin="" data-src="<%= icon %>" class="artwork" src="<%= icon %>">
+          <div class="shadower link">
+            <div class="artwork-details">
+              <div class="primary large-text truncated-line link highlight-band">
+                <%= album %>
+              </div>
+              <br>
+              <div class="secondary truncated-line link highlight-band">
+                <%= artist %>
+              </div>
+            </div>
+          </div> <!-- end of shadower -->
+          <div class="sleeve">
+            <img src="img/2/white-sleeve.png">
+          </div>
+        </div>
+    </script>
+    <script id="color-sample-template" type="text/template">
+      <div style="background-color: <%= color_hex %>" 
+        class="tiny-sample"
+        data-h="<%= color_h %>" data-s="<%= color_s %>" data-b="<%= color_l %>"
+        title="<%= color_hex %> - h[ <%= color_h %>] s[ <%= color_s %>] b[ <%= color_l %>]"></div>
+    </script>
+    <script id="no-auth-template" type="text/template">
+      <p>To get started you will need to <button class="auth">authorize this app</button></p>
+    </script>
+
+  </head>
+  <body>
+    <div class="main-content">
+      <div class="page-title large-text">Color Sample</div>
+      <div class="error"></div>
+      <div class="color_console">
+        <div class="processing"></div>  &lt;-- if this isn't blinking (or purple), the page is locked up calculating something<br><br>
+        <div>
+          Final Color
+          <div class="final_color color_group"></div>
+        <div>
+        <div>
+          Final Colors
+          <div class="final_colors color_group"></div>
+        </div>
+        <div>
+          Merged Colors
+          <div class="merged_colors color_group"></div>
+        </div>
+        <div>
+          Only Legal Colors
+          <div class="pruned_colors color_group"></div>
+        </div>
+        <div>
+          Initial Colors
+          <div class="initial_colors color_group"></div>
+        </div>
+        <div>
+          Legal Colors
+          <input type="range" class="color-range" value="0" min="0" max="255" step="1" />
+          HUE: <span class="color-range-value">-value-</span>
+          <div class="legal_colors color_group"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
