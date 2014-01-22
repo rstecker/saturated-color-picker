@@ -119,60 +119,65 @@ window.ColorPicker.prototype = {
   _isLeft: function(lineA, lineB, point) {
     return ((lineB[0] - lineA[0])*(point[1] - lineA[1]) - (lineB[1] - lineA[1])*(point[0] - lineA[0])) > 0
   },
+  // expects c to be a Refresh.Web.Color type
+  checkIfColorIsValid: function(c) {
+    var x = c.s;
+    var y = c.v;
+    var pass = false;
+    var list = [];
+    if (c.h > 230) { // blue & magenta
+      pass = this._isLeft([54,98], [46,33], [x,y]);
+      pass = pass && this._isLeft([46,33], [100,31], [x,y]);
+      // pass = false;   // DEBUGGING
+    } else if (c.h > 110) { // green & cycan
+
+      list.push([65,99])
+      list.push([56,94])
+      list.push([52,90])
+      list.push([48,84])
+      list.push([46,77])
+      list.push([44,67])
+      list.push([46,59])
+      list.push([50,54])
+      list.push([54,48])
+      list.push([58,44])
+      list.push([65,41])
+      list.push([76,37])
+      list.push([82,35])
+      list.push([90,35])
+      list.push([97,36])
+      list.push([100,38])
+      pass = true;
+      for (var i = 0; (i < list.length - 1) && pass; ++i) {
+        pass = pass && this._isLeft(list[i], list[i+1], [x,y])
+      }
+    } else { // red & yellow
+      list.push([74,100])
+      list.push([69,95])
+      list.push([58,89])
+      list.push([51,83])
+      list.push([47,79])
+      list.push([44,67])
+      list.push([45,59])
+      list.push([49,52])
+      list.push([56,46])
+      list.push([66,40])
+      list.push([78,34])
+      list.push([90,30])
+      list.push([97,30])
+      list.push([100,33])
+      pass = true;
+      for (var i = 0; (i < list.length - 1) && pass; ++i) {
+        pass = pass && this._isLeft(list[i], list[i+1], [x,y])
+      }
+    }
+    return pass;
+  },
   _pruneColors: function(orig_x, reduced_x) {
     var self = this;
     _.each(_.keys(orig_x[0]), function(color){
       var c = Refresh.Web.Color({hex: color})
-      var x = c.s;
-      var y = c.v;
-      var pass = false;
-      var list = [];
-      if (c.h > 230) { // blue & magenta
-        pass = self._isLeft([54,98], [46,33], [x,y]);
-        pass = pass && self._isLeft([46,33], [100,31], [x,y]);
-        // pass = false;   // DEBUGGING
-      } else if (c.h > 110) { // green & cycan
-
-        list.push([65,99])
-        list.push([56,94])
-        list.push([52,90])
-        list.push([48,84])
-        list.push([46,77])
-        list.push([44,67])
-        list.push([46,59])
-        list.push([50,54])
-        list.push([54,48])
-        list.push([58,44])
-        list.push([65,41])
-        list.push([76,37])
-        list.push([82,35])
-        list.push([90,35])
-        list.push([97,36])
-        list.push([100,38])
-        pass = true;
-        for (var i = 0; (i < list.length - 1) && pass; ++i) {
-          pass = pass && self._isLeft(list[i], list[i+1], [x,y])
-        }
-      } else { // red & yellow
-        list.push([74,100])
-        list.push([69,95])
-        list.push([58,89])
-        list.push([51,83])
-        list.push([47,79])
-        list.push([44,67])
-        list.push([45,59])
-        list.push([49,52])
-        list.push([56,46])
-        list.push([66,40])
-        list.push([78,34])
-        list.push([90,30])
-        list.push([97,30])
-        list.push([100,33])
-        pass = true;
-        for (var i = 0; (i < list.length - 1) && pass; ++i) {
-          pass = pass && self._isLeft(list[i], list[i+1], [x,y])
-        }
-      }
+      var pass = self.checkIfColorIsValid(c);
       if (!pass) {
         return;
       }
@@ -181,42 +186,45 @@ window.ColorPicker.prototype = {
   },
   _pickMostLikelyToRock: function(finList) {
     var final_color = [0,'',0]
+    var sat = parseInt($('.sat-weight').val())
+    var bright = parseInt($('.bright-weight').val())
+    var quant = parseInt($('.quant-weight').val())
+    console.log(" >> Picker : h/s/v/c 0/"+sat+"/"+bright+"/"+quant);
+    var ranked_colors = {};
     _.each(_.keys(finList), function(color) {
       var c = Refresh.Web.Color({hex: color});
-      var s = c.s;
       var count = finList[color];
-      var cur_count = final_color[2];
-      var cur_saturation = final_color[0];
 
-      console.log(" > "+c.hex+" ["+finList[color]+"] "+s);
-
-      if (cur_saturation < s) { // more saturated!
-        if (count >= cur_count/2) { // you have to not be tiny
-          final_color = [s, color, count];
-          console.log(" >> nabbed based on saturation!");
-        } else {
-          console.log(" >> more saturated, but not big enough "+(count)+" vs "+(cur_count/2));
-        }
-      } else if (count > cur_count * 10) { // way bigger count!
-        final_color = [s, color, count];
-        console.log(" >> nabbed based on count!");
-      }
+      var val = sat * c.s + bright * c.v + quant * count;
+      console.log(" >> "+color+" : h/s/v/c "+c.h+"/"+c.s+"/"+c.v+"/"+count+" : "+val);
+      ranked_colors[color] = val;
     });
-    return final_color;
+    ranked_colors = _.sortBy(_.keys(ranked_colors), function(v) {
+      return -1*ranked_colors[v];
+    })
+    console.log(ranked_colors);
+    return [ranked_colors[0], ranked_colors];
   },
   colorArtwork: function(givenEl) {
+    this.$el = givenEl;
     $('.final_color').html('');
+    $('.final_ranked_colors').html('');
     $('.final_colors').html('');
     $('.merged_colors').html('');
     $('.pruned_colors').html('');
     $('.initial_colors').html('');
-    this.$el = givenEl;
+    window.rebecca = null;
+    this.setBackgroundColor(jQuery.Color('#000'));
+
+    var preMergeReduce = $('.pre-merge-reduce').hasClass('yes');
+    var minColor = parseInt($('.min-color').val());
+
     console.log(" -- ["+new Date()+"] starting color sample ");
     x = this.$el.find('.artwork').get_colors(true);
-    this.printColorSet(_.keys(x[0]), $('.color_console .initial_colors'));
+    this.printColorSet(_.keys(x[0]), $('.color_console .initial_colors'), true);
     var reduced_x = {};
     this._pruneColors(x, reduced_x);
-    this.printColorSet(_.keys(reduced_x), $('.color_console .pruned_colors'));
+    this.printColorSet(_.keys(reduced_x), $('.color_console .pruned_colors'), true);
 
     console.log(" -- ["+new Date()+"] just ran PRUNE : "+_.keys(reduced_x).length);
     if (_.keys(reduced_x).length == 0) {
@@ -224,7 +232,7 @@ window.ColorPicker.prototype = {
       return;
     }
 
-    if (_.keys(reduced_x).length > 1000) {
+    if (_.keys(reduced_x).length > 1000 && preMergeReduce) {
       console.log(" TOO MANY COLORS, chopping shit down");
       reduced_reduced_x = {};
       _.each(reduced_x, function(value, key) {
@@ -234,6 +242,8 @@ window.ColorPicker.prototype = {
       });
       reduced_x = reduced_reduced_x;
       console.log(" --> clipped to the 2s, now we have "+_.keys(reduced_x).length)
+      this.printColorSet(_.keys(reduced_x), $('.color_console .pruned_colors'), true);
+      $('.color_console .pruned_colors').append("<br><b>Legal colors reduce</b>");
     }
 
     var merged_x = null;
@@ -242,18 +252,18 @@ window.ColorPicker.prototype = {
       console.log(" --- ["+new Date()+"] just ran MERGED ["+i+"]: "+_.keys(merged_x).length);
       // Needs more than 8 options
       // If we're on i < 13 (4th round), we'll accept 5 options
-      if (_.keys(merged_x).length >= 8 || (i < 13 && _.keys(merged_x).length >= 5)) {
+      if (_.keys(merged_x).length >= minColor || (i < 13 && _.keys(merged_x).length >= 5)) {
         break;
       }
     }
-    this.printColorSet(_.keys(merged_x), $('.color_console .merged_colors'));
+    this.printColorSet(_.keys(merged_x), $('.color_console .merged_colors'), true);
 
     var final_x = {};
     if (_.keys(merged_x).length == 0) {
       console.log("No merging found, going with reduced");
       merged_x = reduced_x;
       final_x = merged_x;
-      this.printColorSet(_.keys(merged_x), $('.color_console .merged_colors'));
+      this.printColorSet(_.keys(merged_x), $('.color_console .merged_colors'), true);
     } else {
       console.log(" -- ["+new Date()+"] settled MERGE on "+_.keys(merged_x).length);
 
@@ -271,41 +281,43 @@ window.ColorPicker.prototype = {
       });
     }
     console.log(" -- ["+new Date()+"] just ran FINAL : "+_.keys(final_x).length+" :: ",final_x);
-    this.printColorSet(_.keys(final_x), $('.color_console .final_colors'));
-
-    //console.log(" RESULTS: ",final_x);
-    var final_color = this.pickFinalColor(final_x, 0.01, 1, 0.2, 0.85);
-    if (final_color[0] == 0) {
-      final_color = this.pickFinalColor(final_x, 0.01, 1, 0.01, 0.99);
-    }
-    final_color = this._pickMostLikelyToRock(final_x);
-    if (final_color[0] == 0) {
-      console.error("Color picking failed.  Bailing now so as not to set random color");
-      return;
-    }
-    var c = jQuery.Color('#'+final_color[1]);
-    this.setBackgroundColor(c);
-    var color = Refresh.Web.Color({ hex: final_color[1] })
-    var data = {
-      color_hex: '#'+final_color[1],
-      color_h: color.h,
-      color_s: color.s,
-      color_l: color.v
-    }
-    Main.template('color-sample', data).find('.tiny-sample').appendTo($('.final_color'));
+    this.printColorSet(_.keys(final_x), $('.color_console .final_colors'), true);
 
     window.rebecca = {
       x: x[0],
       reduce: reduced_x,
       merge: merged_x,
       fin: final_x,
-      color: c,
       t: this
     }
-    console.log(" -- final results: ", window.rebecca);
-    if ($('.cheat').length > 0) {
-      printCheatSheet();
+    this.reCalcFinalColors();
+  },
+  reCalcFinalColors: function() {
+    if (!window.rebecca) {
+      return;
     }
+    $('.final_color').html('');
+    $('.final_ranked_colors').html('');
+    var final_x = window.rebecca.fin;
+    final_color = this._pickMostLikelyToRock(final_x);
+    this.printColorSet(final_color[1], $('.color_console .final_ranked_colors'));
+    if (final_color[0] == 0) {
+      console.error("Color picking failed.  Bailing now so as not to set random color");
+      return;
+    }
+    var c = jQuery.Color('#'+final_color[0]);
+    this.setBackgroundColor(c);
+    var color = Refresh.Web.Color({ hex: final_color[0] })
+    var data = {
+      color_hex: '#'+final_color[0],
+      color_h: color.h,
+      color_s: color.s,
+      color_l: color.v
+    }
+    Main.template('color-sample', data).find('.tiny-sample').appendTo($('.final_color'));
+    $('.final_color').append(" : #"+final_color[0]);
+    window.rebecca.color = c;
+    console.log(" -- final results: ", window.rebecca);
   },
   startProcessingMonitor: function() {
     $('.processing').toggleClass('go');
@@ -322,38 +334,33 @@ window.ColorPicker.prototype = {
     var all_colors = {};
     var reduced_colors = [];
     $('.color_console .legal_colors').html('');
-
+    var size = 5;
     for (var s = 0; s <= 100; ++s){
       for (var v = 0; v <= 100; ++v){
         var c = Refresh.Web.Color({ h: hue, v: v, s: s})
-        var color = c.hex;
-        all_colors[color] = c;
+        if (this.checkIfColorIsValid(c)) {
+          var data = {
+            color_hex: '#'+c.hex,
+            color_h: c.h,
+            color_s: c.s,
+            color_l: c.v
+          }
+          var el = Main.template('color-sample', data).find('.tiny-sample').appendTo($('.color_console .legal_colors'));
+          el.css('top', ((100 * size) - (s * size)) + 'px');
+          el.css('left', (v * size) + 'px');
+          el.css('position', 'absolute');
+          el.css('width', size+'px');
+          el.css('height', size+'px');
+        }
       }
     }
-    console.log(" -- starting pruning of valid colors : "+new Date())
-    this._pruneColors([all_colors], reduced_colors)
-    console.log(" -- starting printing of valid colors : "+new Date())
-    var size = 5;
-    _.each(reduced_colors, function(val, key) {
-      var c = val;
-      var color = key;
-      var data = {
-        color_hex: '#'+color,
-        color_h: c.h,
-        color_s: c.s,
-        color_l: c.v
-      }
-      var el = Main.template('color-sample', data).find('.tiny-sample').appendTo($('.color_console .legal_colors'));
-      el.css('top', (c.s * size) + 'px');
-      el.css('left', (c.v * size) + 'px');
-      el.css('position', 'absolute');
-      el.css('width', size+'px');
-      el.css('height', size+'px');
-    });
   },
-  printColorSet: function(keys, destEl) {
+  printColorSet: function(keys, destEl, sort) {
     destEl.html('');
-    _.each(keys.sort(), function(color){
+    if (sort) {
+      keys = keys.sort();
+    }
+    _.each(keys, function(color){
       var c = Refresh.Web.Color({hex: color})
       var data = {
         color_hex: '#'+color,
@@ -383,12 +390,12 @@ window.ColorPicker.prototype = {
             var h = $(this).height();//this.getAttribute('height');
             w = 100;
             h = 100;
-            canvas.setAttribute('width', w);  
-            canvas.setAttribute('height', h); 
+            canvas.setAttribute('width', w);
+            canvas.setAttribute('height', h);
             var ctxt = canvas.getContext('2d');
             if (ctxt){
               ctxt.drawImage(this, 0, 0, w, h);
-              var imagedata = ctxt.getImageData(0, 0, w, h * 2.0 / 3.0);
+              var imagedata = ctxt.getImageData(0, 0, w, h);
               var data = imagedata.data;
               //log('imagedata.width:'+imagedata.width+' imagedata.height:'+imagedata.height+' w:'+w+' h:'+h);
               var obj = {};

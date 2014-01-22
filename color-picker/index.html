@@ -37,16 +37,12 @@
               </div>
             </div>
           </div> <!-- end of shadower -->
-          <div class="sleeve">
-            <img src="img/2/white-sleeve.png">
-          </div>
         </div>
     </script>
     <script id="color-sample-template" type="text/template">
       <div style="background-color: <%= color_hex %>" 
         class="tiny-sample"
-        data-h="<%= color_h %>" data-s="<%= color_s %>" data-b="<%= color_l %>"
-        title="<%= color_hex %> - h[ <%= color_h %>] s[ <%= color_s %>] b[ <%= color_l %>]"></div>
+        title="<%= color_hex %> - h[<%= color_h %>] s[<%= color_s %>] v[<%= color_l %>]"></div>
     </script>
     <script id="no-auth-template" type="text/template">
       <p>To get started you will need to <button class="auth">authorize this app</button></p>
@@ -58,11 +54,25 @@
       <div class="page-title large-text">Color Sample</div>
       <div class="error"></div>
       <div class="color_console">
+        specific URL : <input type="text" class="custom-url"><br>
         <div class="processing"></div>  &lt;-- if this isn't blinking (or purple), the page is locked up calculating something<br><br>
+        <div>
+          <input value="4" class="sat-weight weight" type="number"> * saturation + 
+          <input value="1" class="bright-weight weight" type="number"> * brigthness + 
+          <input value="1" class="quant-weight weight" type="number"> * quantity = 
+          <input type="button" value="rank" class="calc-weight">
+          <br>
+          <input type="button" value="Pre-merge reduce" class="pre-merge-reduce yes">,
+          Min Color? <input type="number" value="8" class="min-color weight">
+        </div>
         <div>
           Final Color
           <div class="final_color color_group"></div>
         <div>
+        <div>
+          Final Ranked Colors
+          <div class="final_ranked_colors color_group"></div>
+        </div>
         <div>
           Final Colors
           <div class="final_colors color_group"></div>

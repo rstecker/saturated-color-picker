@@ -92,6 +92,20 @@
       var pick = _.debounce(_.bind(this.picker.printValidColors, this.picker), 500);
       $('.color-range').change(pick);
       pick();
+      var recalc = _.debounce(_.bind(this.picker.reCalcFinalColors, this.picker), 500);
+      $('.calc-weight').click(recalc);
+      $('.custom-url').change(function() {
+        var url = $('.custom-url').val();
+        $($('.artwork')[0]).attr('src',url);
+        $($('.primary')[0]).text('This is now displaying a custom URL')
+        $($('.secondary')[0]).text('Whatever kale chips Blue Bottle, put a bird on it beer')
+        _.delay(function() {
+          $($('.artwork')[0]).click();
+        }, 1000);
+      });
+      $('.pre-merge-reduce').click(function() {
+        $('.pre-merge-reduce').toggleClass('yes');
+      })
       this.picker.startProcessingMonitor();
       self.log('initial layout');
       self.log('startup complete');
